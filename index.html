@@ -1,29 +1,275 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RUPTURE</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title data-i18n="page_title">RUPTURE GAMES — Official</title>
+  <meta name="description" content="RUPTURE GAMES — официальная страница студии. Новости, игры, поддержка, Хиро." />
+  <!-- Fonts: original + techy -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- main stylesheet (будет прислан отдельным сообщением) -->
   <link rel="stylesheet" href="style.css">
+  <!-- favicon -->
+  <link rel="icon" href="https://i.ibb.co/GQ8QQBMZ/Picsart-25-07-18-11-08-46-406-2-1.jpg">
 </head>
 <body>
-  <header>
-    <img src="https://i.ibb.co/h1JGYfgY/2f9d26b5-99e6-4dfc-adf7-3edd1c76b43a.jpg" alt="RUPTURE" class="logo">
-    <nav>
-      <button class="nav-btn" data-page="home">Главная</button>
-      <button class="nav-btn" data-page="news">Новости</button>
-      <button class="nav-btn" data-page="games">Игры</button>
-      <button class="nav-btn" data-page="support">Поддержка</button>
-      <button class="nav-btn" data-page="about">О нас</button>
-      <button class="nav-btn" data-page="profile">Профиль</button>
+
+  <!-- ========== Background canvas wrapper ========== -->
+  <div id="bg-wrap" aria-hidden="true">
+    <canvas id="bg-canvas"></canvas>
+    <div id="bg-glass"></div> <!-- glass blur overlay (CSS) -->
+  </div>
+
+  <!-- ========== Topbar: logo (acts like Windows-button), burger for mobile, and controls ========== -->
+  <header class="topbar" role="banner" aria-label="Main header">
+    <div class="top-left">
+      <!-- Logo acts as Start Button: opens large "launcher" panel -->
+      <button id="logoStart" class="logo-start" aria-label="Open launcher" title="Open launcher">
+        <img id="siteLogo" src="https://i.ibb.co/GQ8QQBMZ/Picsart-25-07-18-11-08-46-406-2-1.jpg" alt="RUPTURE logo">
+      </button>
+
+      <!-- three-line mini icon next to logo (optional visual) -->
+      <button id="miniMenuToggle" class="mini-menu" aria-label="Menu">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+    </div>
+
+    <!-- Desktop nav (important: basic links; main navigation available from launcher) -->
+    <nav class="nav" role="navigation" aria-label="Top navigation">
+      <ul class="nav-list">
+        <li><a class="nav-link btn-ambient" href="#home" data-route="home" data-i18n="nav_home">Главная</a></li>
+        <li class="has-dropdown">
+          <button class="nav-link btn-ambient drop-toggle" aria-expanded="false" aria-haspopup="true" data-i18n="nav_games">Игры ▾</button>
+          <ul class="dropdown" aria-hidden="true">
+            <li><button class="dropdown-link" data-route="games" data-action="openSection">Наши игры</button></li>
+            <li class="muted">Проекты в разработке</li>
+          </ul>
+        </li>
+        <li><a class="nav-link btn-ambient" href="#news" data-route="news" data-i18n="nav_news">Новости</a></li>
+        <li><a class="nav-link btn-ambient" href="#support" data-route="support" data-i18n="nav_support">Поддержка</a></li>
+        <li><a class="nav-link btn-ambient" href="#about" data-route="about" data-i18n="nav_about">О нас</a></li>
+      </ul>
     </nav>
+
+    <div class="top-right">
+      <div class="search-mini">
+        <input id="miniSearch" placeholder="Поиск / Search" data-i18n-placeholder="mini_search_ph" aria-label="Search">
+        <button id="miniSearchBtn" class="btn small">🔍</button>
+      </div>
+
+      <button id="langBtn" class="btn small globe" aria-label="Change language">🌐 RU</button>
+    </div>
   </header>
 
-  <main id="content">
-    <h1>Добро пожаловать в RUPTURE</h1>
-    <p>Скоро здесь будет взрывной контент ⚡</p>
+  <!-- ========== Launcher panel (opened by logoStart) ========== -->
+  <div id="launcher" class="launcher" aria-hidden="true" role="dialog" aria-label="Launcher">
+    <div class="launcher-inner">
+      <div class="launcher-top">
+        <div class="launcher-brand">
+          <img src="https://i.ibb.co/GQ8QQBMZ/Picsart-25-07-18-11-08-46-406-2-1.jpg" alt="logo" class="launcher-logo">
+          <div class="launcher-title">
+            <div class="brand">RUPTURE GAMES</div>
+            <div class="brand-sub" data-i18n="brand_sub">Игры • Новости • Поддержка</div>
+          </div>
+        </div>
+        <button id="launcherClose" class="btn ghost" aria-label="Close launcher">✕</button>
+      </div>
+
+      <div class="launcher-search">
+        <input id="launcherSearch" placeholder="Найти игру, новость или страницу..." data-i18n-placeholder="launcher_search_ph" aria-label="Launcher search">
+        <button id="launcherSearchBtn" class="btn primary">Поиск</button>
+      </div>
+
+      <div class="launcher-grid">
+        <div class="launcher-column">
+          <h4 data-i18n="lnk_games">Игры</h4>
+          <ul>
+            <li><button class="l-link" data-target="games">Наши игры</button></li>
+            <li class="muted">Проекты в разработке</li>
+          </ul>
+        </div>
+        <div class="launcher-column">
+          <h4 data-i18n="lnk_news">Новости</h4>
+          <ul>
+            <li><button class="l-link" data-target="news">Последние обновления</button></li>
+            <li><button class="l-link" data-target="news">Архив</button></li>
+          </ul>
+        </div>
+        <div class="launcher-column">
+          <h4 data-i18n="lnk_support">Поддержка</h4>
+          <ul>
+            <li><button class="l-link" data-target="support">FAQ</button></li>
+            <li><button class="l-link" data-target="support">Написать нам</button></li>
+          </ul>
+        </div>
+        <div class="launcher-column">
+          <h4 data-i18n="lnk_social">Соцсети</h4>
+          <ul>
+            <li><a href="https://www.youtube.com/@RUPTURE_official" target="_blank">YouTube</a></li>
+            <li><a href="https://tiktok.com/@rupture_official" target="_blank">TikTok</a></li>
+            <li><a href="https://x.com/Rupture_Off" target="_blank">X</a></li>
+            <li><a href="https://t.me/rupture_off" target="_blank">Telegram</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- launcher footer: quick settings -->
+      <div class="launcher-footer">
+        <div class="quick-actions">
+          <button id="openHiroFromLauncher" class="btn ghost">Открыть Хиро</button>
+          <button id="openMailFromLauncher" class="btn ghost">Написать по почте</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== Main content SPA ========== -->
+  <main id="app" class="app" role="main">
+
+    <!-- HOME -->
+    <section id="home" class="page active" aria-labelledby="home-title">
+      <div class="hero">
+        <div class="hero-content">
+          <h1 id="home-title" data-i18n="home_title">Добро пожаловать в RUPTURE</h1>
+          <p class="lead" data-i18n="home_sub">Игры с характером — атмосфера в каждой тени.</p>
+
+          <div class="hero-cta">
+            <button class="btn primary magnetic" data-route="games" data-i18n="btn_games">Наши игры</button>
+            <button class="btn ghost magnetic" data-route="news" data-i18n="btn_news">Новости</button>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <!-- decorative visual placeholder; CSS will draw or position -->
+        </div>
+      </div>
+
+      <div class="home-features">
+        <div class="feature">Фирменный стиль</div>
+        <div class="feature">Поддержка</div>
+        <div class="feature">Хиро — ассистент</div>
+      </div>
+    </section>
+
+    <!-- GAMES -->
+    <section id="games" class="page" aria-labelledby="games-title">
+      <div class="section-inner">
+        <h2 id="games-title" data-i18n="games_title">Игры</h2>
+        <div id="gamesList" class="cards">
+          <!-- card template (populate in HTML or via JS) -->
+          <article class="card">
+            <div class="card-media"><img src="https://via.placeholder.com/1000x500?text=In+Development" alt=""></div>
+            <div class="card-body">
+              <h3 class="card-title">Проект в разработке</h3>
+              <p class="card-desc">Информация появится позже. Следите за новостями.</p>
+              <div class="card-actions">
+                <button class="btn" data-route="news">Новости</button>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEWS -->
+    <section id="news" class="page" aria-labelledby="news-title">
+      <div class="section-inner">
+        <h2 id="news-title" data-i18n="news_title">Новости</h2>
+
+        <div class="news-controls">
+          <label for="newsDate" class="muted" data-i18n="news_filter">Фильтр по дате:</label>
+          <input id="newsDate" type="date" aria-label="Filter news by date">
+          <button id="newsClear" class="btn ghost" data-i18n="btn_show_all">Показать все</button>
+        </div>
+
+        <div id="newsFeed" class="news-list" aria-live="polite" aria-atomic="true">
+          <!-- news items must have data-date="YYYY-MM-DD" -->
+          <article class="news-item" data-date="2025-11-13">
+            <div class="news-head">
+              <h3 class="news-title">Сайт обновлён — добавлен Хиро</h3>
+              <time class="news-date" datetime="2025-11-13">13 ноября 2025</time>
+            </div>
+            <p class="news-body">Интерфейс улучшен, добавлен ассистент Хиро. Следите за обновлениями.</p>
+          </article>
+
+          <article class="news-item" data-date="2025-10-05">
+            <div class="news-head">
+              <h3 class="news-title">Новый логотип</h3>
+              <time class="news-date" datetime="2025-10-05">05 октября 2025</time>
+            </div>
+            <p class="news-body">Мы обновили фирменный логотип и стиль оформления сайта.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SUPPORT -->
+    <section id="support" class="page" aria-labelledby="support-title">
+      <div class="section-inner">
+        <h2 id="support-title" data-i18n="support_title">Поддержка</h2>
+        <div class="support-grid">
+          <div class="faq">
+            <details>
+              <summary data-i18n="faq_publish_q">Как публиковать новости?</summary>
+              <div class="faq-body" data-i18n="faq_publish_a">Добавьте элемент в #newsFeed с атрибутом data-date (YYYY-MM-DD). Затем перезагрузите или нажмите «Обновить знания» в Хиро.</div>
+            </details>
+            <details>
+              <summary data-i18n="faq_addgame_q">Как добавить игру?</summary>
+              <div class="faq-body" data-i18n="faq_addgame_a">Добавьте карточку в #gamesList или запросите шаблон у Хиро.</div>
+            </details>
+          </div>
+
+          <div class="support-actions">
+            <button id="openHiroBtn" class="btn primary" data-i18n="btn_open_hiro">Открыть Хиро</button>
+            <button id="openMailBtn" class="btn ghost" data-i18n="btn_write_mail">Написать по почте</button>
+            <button id="reindexBtn" class="btn ghost" data-i18n="btn_reindex">Обновить знания</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about" class="page" aria-labelledby="about-title">
+      <div class="section-inner">
+        <h2 id="about-title" data-i18n="about_title">О компании</h2>
+        <p data-i18n="about_text">RUPTURE — независимая студия, создающая миры с характером.</p>
+      </div>
+    </section>
   </main>
 
+  <!-- ========== Hiro orb (call) & popup window (hidden by default) ========== -->
+  <div id="hiro-orb" class="hiro-orb" title="Open Hiro" aria-hidden="false"></div>
+
+  <div id="hiro-window" class="hiro-window" aria-hidden="true" role="dialog" aria-label="Hiro assistant">
+    <div class="hiro-header">
+      <div class="hiro-title" data-i18n="hiro_title">Хиро — ассистент</div>
+      <button id="hiro-close" class="btn ghost" aria-label="Close">✕</button>
+    </div>
+    <div id="hiro-messages" class="hiro-messages" aria-live="polite"></div>
+    <div class="hiro-input">
+      <input id="hiro-input" placeholder="Спроси: 'Что нового', 'Кто в команде', 'Как публиковать'" data-i18n-placeholder="hiro_placeholder" aria-label="Hiro input">
+      <button id="hiro-send" class="btn primary" data-i18n="btn_send">Отправить</button>
+    </div>
+    <div class="hiro-quick">
+      <button class="btn ghost quick" data-q="что нового" data-i18n="quick_news">Что нового</button>
+      <button class="btn ghost quick" data-q="игры" data-i18n="quick_games">Игры</button>
+      <button class="btn ghost quick" data-q="как публиковать" data-i18n="quick_publish">Как публиковать</button>
+    </div>
+  </div>
+
+  <!-- ========== Welcome bubble (appears for 3s) ========== -->
+  <div id="hiro-welcome" class="hiro-welcome" aria-hidden="true">Привет! Я Хиро — ассистент RUPTURE GAMES. Нажми на сферу, чтобы поговорить.</div>
+
+  <!-- ========== Footer (moved to bottom) ========== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-left">© 2025 RUPTURE</div>
+      <div class="footer-center">Сделано с характером</div>
+      <div class="footer-right">Хиро — поддержка</div>
+    </div>
+  </footer>
+
+  <!-- Link to external JS (будет следующий) -->
   <script src="script.js"></script>
 </body>
 </html>
