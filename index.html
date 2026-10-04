@@ -2,60 +2,724 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>RUPTURE</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070707">
+<meta name="description" content="RUPTURE — Game development studio. DownForce — Coming Soon.">
+<meta name="author" content="RUPTURE">
+<meta property="og:title" content="RUPTURE — Games">
+<meta property="og:description" content="RUPTURE — Game development studio. DownForce — Coming Soon.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://i.ibb.co/s9N99k1T/Picsart-25-07-18-11-08-46-406-2-1.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://i.ibb.co/s9N99k1T/Picsart-25-07-18-11-08-46-406-2-1.jpg">
+<link rel="icon" type="image/jpeg" href="https://i.ibb.co/s9N99k1T/Picsart-25-07-18-11-08-46-406-2-1.jpg">
+<title>RUPTURE — Games</title>
 
-<link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root{
+  --bg:#050505;
+  --bg2:#0b0b0d;
+  --panel:rgba(17,17,20,.86);
+  --panel2:#111114;
+  --text:#f7f7f8;
+  --muted:#92929a;
+  --red:#ff2842;
+  --red2:#b90e27;
+  --line:rgba(255,255,255,.10);
+  --soft:rgba(255,255,255,.055);
+  --ease:cubic-bezier(.16,1,.3,1);
+  --header:76px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;background:var(--bg)}
+body{
+  min-height:100vh;background:#050505;color:var(--text);
+  font-family:Inter,Arial,sans-serif;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+button,input{font:inherit} button{border:0} a{text-decoration:none;color:inherit}
+button,a,.clickable{ -webkit-tap-highlight-color:transparent }
+::selection{background:var(--red);color:#fff}
+
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:80;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.65'/%3E%3C/svg%3E");
+}
+.ambient{
+  position:fixed;inset:-25%;pointer-events:none;z-index:-2;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(255,30,55,.13),transparent 22%),
+    radial-gradient(circle at 78% 30%,rgba(255,0,30,.08),transparent 24%),
+    radial-gradient(circle at 50% 90%,rgba(255,30,55,.07),transparent 25%);
+  filter:blur(50px);animation:ambient 14s ease-in-out infinite alternate;
+}
+@keyframes ambient{from{transform:scale(1) rotate(0)}to{transform:scale(1.08) rotate(2deg)}}
+
+.header{
+  position:fixed;top:0;left:0;right:0;height:var(--header);z-index:100;
+  display:flex;align-items:center;justify-content:space-between;padding:0 26px;
+  background:linear-gradient(#050505e8,transparent);
+  transition:.4s var(--ease);
+}
+.header.scrolled{
+  background:rgba(5,5,6,.78);backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--line);
+}
+.left,.right{display:flex;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:11px;cursor:pointer}
+.logo{width:42px;height:42px;border-radius:10px;object-fit:cover;box-shadow:0 0 28px #ff284222}
+.brand-name{font-size:21px;font-weight:900;letter-spacing:-.06em}
+.menu{
+  width:43px;height:43px;border:1px solid var(--line);border-radius:12px;
+  background:var(--soft);display:grid;place-items:center;cursor:pointer;transition:.35s var(--ease);
+}
+.menu:hover{background:var(--red);transform:translateY(-2px) rotate(2deg)}
+.menu-lines{width:19px;display:grid;gap:5px}
+.menu-lines i{height:2px;background:#fff;border-radius:4px;transition:.35s var(--ease)}
+.menu.active .menu-lines i:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.menu.active .menu-lines i:nth-child(2){opacity:0}
+.menu.active .menu-lines i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.nav-arrows{display:flex;gap:4px;margin-left:8px}
+.icon-btn{
+  width:35px;height:35px;border-radius:9px;background:transparent;color:#999;cursor:pointer;
+  transition:.25s var(--ease)
+}
+.icon-btn:hover{color:#fff;background:var(--soft);transform:translateY(-2px)}
+.search-btn,.account-btn{
+  height:43px;border:1px solid var(--line);background:var(--soft);color:#fff;border-radius:12px;
+  cursor:pointer;transition:.3s var(--ease)
+}
+.search-btn{width:43px;font-size:18px}
+.search-btn:hover,.account-btn:hover{background:var(--red);transform:translateY(-2px)}
+.account-btn{padding:0 16px;font-size:12px;font-weight:800;letter-spacing:.04em}
+
+main{min-height:100vh}
+.hero{
+  min-height:100svh;position:relative;display:grid;place-items:center;overflow:hidden;
+  background:
+    radial-gradient(circle at 78% 45%,#ff183b20,transparent 23%),
+    radial-gradient(circle at 40% 90%,#ff183b0b,transparent 30%),
+    #060607;
+}
+.hero::before{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(115deg,transparent 0 47%,#ffffff06 47.2%,transparent 47.5%),
+    linear-gradient(70deg,transparent 0 63%,#ff28420b 63.2%,transparent 63.4%);
+  animation:scan 9s linear infinite;
+}
+@keyframes scan{0%{transform:translateX(-3%)}50%{transform:translateX(3%)}100%{transform:translateX(-3%)}}
+.hero-orbit{
+  position:absolute;width:min(72vw,900px);aspect-ratio:1;border:1px solid #ff284218;border-radius:50%;
+  right:-20%;top:10%;transform:rotate(18deg);box-shadow:0 0 100px #ff28420b;
+}
+.hero-orbit::before,.hero-orbit::after{
+  content:"";position:absolute;border:1px solid #fff08;border-radius:50%;
+}
+.hero-orbit::before{inset:12%;transform:rotate(37deg)}
+.hero-orbit::after{inset:25%;transform:rotate(-28deg)}
+.hero-lines{
+  position:absolute;inset:0;opacity:.22;
+  background-image:
+    linear-gradient(#fff 1px,transparent 1px),
+    linear-gradient(90deg,#fff 1px,transparent 1px);
+  background-size:100px 100px;
+  mask-image:linear-gradient(to bottom,black,transparent 75%);
+  animation:gridmove 16s linear infinite;
+}
+@keyframes gridmove{to{background-position:100px 100px}}
+.hero-content{
+  width:min(1320px,calc(100% - 54px));position:relative;z-index:3;padding-top:80px;
+}
+.hero-kicker{display:flex;align-items:center;gap:9px;color:#bdbdc4;font-size:11px;letter-spacing:.22em;font-weight:800}
+.dot{width:7px;height:7px;background:var(--red);border-radius:50%;box-shadow:0 0 18px var(--red);animation:pulse 1.8s infinite}
+@keyframes pulse{50%{box-shadow:0 0 30px var(--red)}}
+.hero h1{
+  margin-top:18px;font-size:clamp(70px,12vw,175px);line-height:.78;letter-spacing:-.095em;
+  font-weight:900;max-width:1000px;
+}
+.hero h1 span{display:block;color:transparent;-webkit-text-stroke:1px #ffffff70}
+.hero-copy{max-width:570px;margin-top:30px;color:#aaa;line-height:1.8;font-size:14px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.btn{
+  min-height:51px;padding:0 20px;border-radius:12px;display:inline-flex;align-items:center;gap:9px;
+  cursor:pointer;font-size:12px;font-weight:900;letter-spacing:.03em;transition:.35s var(--ease);
+  position:relative;overflow:hidden;
+}
+.btn::after{
+  content:"";position:absolute;inset:-80% -20%;background:linear-gradient(100deg,transparent,#fff4,transparent);
+  transform:translateX(-100%) rotate(12deg);transition:.7s;
+}
+.btn:hover::after{transform:translateX(100%) rotate(12deg)}
+.primary{background:var(--red);color:#fff;box-shadow:0 15px 55px #ff28422b}
+.primary:hover{transform:translateY(-4px);box-shadow:0 22px 70px #ff284244}
+.secondary{background:#ffffff08;border:1px solid var(--line);color:#fff}
+.secondary:hover{transform:translateY(-4px);background:#ffffff10}
+.hero-meta{display:flex;gap:9px;margin-top:17px;flex-wrap:wrap}
+.chip{padding:7px 10px;border:1px solid var(--line);border-radius:7px;color:#9a9aa0;font-size:10px;font-weight:800;background:#0005}
+.scroll-hint{
+  position:absolute;bottom:28px;right:28px;color:#6f6f76;font-size:9px;letter-spacing:.18em;
+  writing-mode:vertical-rl;display:flex;gap:8px;align-items:center
+}
+.scroll-hint::before{content:"";width:1px;height:42px;background:linear-gradient(#ff2842,transparent)}
+
+.section{padding:110px 0}
+.container{width:min(1320px,calc(100% - 54px));margin:auto}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:28px}
+.kicker{font-size:10px;letter-spacing:.2em;color:var(--red);font-weight:900}
+.title{font-size:clamp(35px,5vw,67px);letter-spacing:-.07em;line-height:.95;margin-top:8px}
+.desc{max-width:430px;color:#777;line-height:1.7;font-size:12px}
+
+.game-card{
+  position:relative;min-height:510px;border:1px solid var(--line);border-radius:28px;overflow:hidden;
+  background:
+    radial-gradient(circle at 78% 35%,#ff284226,transparent 25%),
+    linear-gradient(120deg,#121214,#080809);
+  cursor:pointer;transition:.6s var(--ease);transform-style:preserve-3d;
+}
+.game-card:hover{transform:perspective(1100px) rotateX(1deg) rotateY(-1deg) translateY(-8px);border-color:#ff284255;box-shadow:0 35px 100px #000}
+.card-noise{position:absolute;inset:0;background:repeating-linear-gradient(115deg,transparent 0 18px,#fff006 19px,transparent 20px);opacity:.16}
+.card-content{position:absolute;inset:auto 45px 45px;z-index:2}
+.card-category{color:#aaa;font-size:10px;letter-spacing:.2em;font-weight:800}
+.card-title{font-size:clamp(60px,10vw,125px);font-weight:900;letter-spacing:-.1em;line-height:.8;margin-top:12px}
+.card-info{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.card-arrow{
+  position:absolute;right:35px;bottom:35px;width:64px;height:64px;border-radius:50%;background:var(--red);
+  display:grid;place-items:center;font-size:24px;transition:.5s var(--ease)
+}
+.game-card:hover .card-arrow{transform:rotate(-45deg) scale(1.1);box-shadow:0 0 40px #ff284255}
+
+.footer{padding:55px 0 35px;border-top:1px solid var(--line);background:#030304}
+.footer-row{display:flex;justify-content:space-between;gap:30px}
+.socials{display:flex;flex-wrap:wrap;gap:9px;justify-content:flex-end}
+.social{font-size:11px;color:#777;padding:9px 11px;border:1px solid var(--line);border-radius:8px;transition:.25s}
+.social:hover{color:#fff;border-color:#ff2842;background:#ff28420d;transform:translateY(-2px)}
+.copyright{margin-top:55px;color:#555;font-size:10px;display:flex;justify-content:space-between}
+
+.drawer,.window{
+  position:fixed;z-index:300;inset:0;background:#0009;backdrop-filter:blur(14px);
+  opacity:0;visibility:hidden;transition:.45s var(--ease);display:grid;place-items:center;padding:20px
+}
+.drawer.open,.window.open{opacity:1;visibility:visible}
+.drawer-panel{
+  width:min(470px,94vw);height:min(760px,94vh);margin-right:auto;
+  background:linear-gradient(150deg,#121216,#08080a);border:1px solid var(--line);border-radius:25px;
+  box-shadow:40px 0 100px #000;transform:translateX(-30px);transition:.5s var(--ease);padding:30px;
+  position:relative;overflow:auto
+}
+.drawer.open .drawer-panel{transform:none}
+.window-card{
+  width:min(1120px,96vw);max-height:92vh;overflow:auto;background:linear-gradient(145deg,#141417,#080809);
+  border:1px solid var(--line);border-radius:25px;box-shadow:0 35px 120px #000;
+  transform:translateY(25px) scale(.97);transition:.5s var(--ease);position:relative
+}
+.window.open .window-card{transform:none}
+.window-head{
+  position:sticky;top:0;z-index:5;height:68px;padding:0 20px 0 25px;display:flex;align-items:center;
+  justify-content:space-between;background:#0b0b0dcc;backdrop-filter:blur(18px);border-bottom:1px solid var(--line)
+}
+.window-title{font-size:12px;letter-spacing:.15em;font-weight:900}
+.close{width:38px;height:38px;border-radius:10px;background:#ffffff09;color:#fff;cursor:pointer;transition:.25s}
+.close:hover{background:var(--red);transform:rotate(90deg)}
+.window-body{padding:30px}
+.window-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.panel{
+  border:1px solid var(--line);border-radius:18px;background:#ffffff04;padding:24px;
+  transition:.35s var(--ease)
+}
+.panel:hover{border-color:#ff284233;transform:translateY(-3px)}
+.panel h3{font-size:21px;letter-spacing:-.04em;margin-bottom:10px}
+.panel p{color:#85858c;font-size:13px;line-height:1.8}
+.big-number{font-size:60px;font-weight:900;letter-spacing:-.08em}
+.list{display:grid;gap:8px;margin-top:16px}
+.list-item{padding:13px 14px;border:1px solid var(--line);border-radius:10px;color:#aaa;background:#0002}
+
+.search-results{display:grid;gap:10px;margin-top:16px}
+.result{padding:16px;border:1px solid var(--line);border-radius:14px;cursor:pointer;transition:.25s}
+.result:hover{background:#ff28420c;border-color:#ff284255;transform:translateX(4px)}
+.result strong{display:block;font-size:15px}.result span{font-size:11px;color:#777}
+
+.media-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(260px,.8fr);gap:16px}
+.media-box,.photo-box{
+  border:1px solid var(--line);border-radius:18px;background:#000;overflow:hidden;position:relative
+}
+.media-box iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
+.media-controls{display:flex;align-items:center;gap:9px;padding:12px;flex-wrap:wrap;background:#09090a;border-top:1px solid var(--line)}
+.select,.media-control{
+  min-height:38px;padding:0 11px;border:1px solid var(--line);border-radius:9px;background:#111114;color:#ddd;font-size:11px
+}
+.media-note{color:#666;font-size:10px;line-height:1.5;margin-left:auto}
+.photo-box{display:flex;flex-direction:column;min-height:100%}
+.photo-stage{position:relative;flex:1;min-height:320px;display:grid;place-items:center;background:#050505;overflow:hidden}
+.photo-stage img{width:100%;height:100%;min-height:320px;object-fit:cover;transition:.5s var(--ease)}
+.photo-stage.zoom img{transform:scale(1.12)}
+.photo-caption{padding:12px;color:#777;font-size:10px;border-top:1px solid var(--line);display:flex;justify-content:space-between}
+.photo-buttons{display:flex;gap:7px;padding:10px;border-top:1px solid var(--line)}
+.photo-buttons button{flex:1}
+
+.game-window .window-card{width:min(1280px,97vw)}
+.game-hero{
+  min-height:430px;border:1px solid var(--line);border-radius:19px;overflow:hidden;position:relative;
+  display:flex;align-items:flex-end;background:
+    radial-gradient(circle at 75% 30%,#ff28422b,transparent 28%),
+    linear-gradient(125deg,#111115,#070708)
+}
+.game-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#050505ee 0%,#0505058a 45%,transparent 100%)}
+.game-hero-content{position:relative;z-index:2;padding:42px}
+.game-hero h1{font-size:clamp(65px,10vw,135px);letter-spacing:-.1em;line-height:.78;margin-top:12px}
+.game-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:25px}
+.game-detail-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:15px;margin-top:15px}
+.stat-card{min-height:190px}
+.stat{display:flex;justify-content:space-between;gap:20px;padding:14px 0;border-bottom:1px solid var(--line);font-size:12px}
+.stat:last-child{border-bottom:0}.stat span{color:#666}.stat b{color:#ddd}
+
+.auth-form{display:grid;gap:10px;max-width:500px}
+.field{height:47px;width:100%;padding:0 14px;background:#08080a;border:1px solid var(--line);border-radius:10px;color:#fff;outline:0}
+.field:focus{border-color:#ff284266;box-shadow:0 0 0 3px #ff28420d}
+.auth-message{color:#777;font-size:11px;min-height:16px}
+
+.settings-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.setting{
+  padding:18px;border:1px solid var(--line);border-radius:14px;background:#ffffff03;
+  display:flex;align-items:center;justify-content:space-between;gap:15px
+}
+.setting span{font-size:12px;font-weight:800}.setting small{display:block;color:#666;margin-top:5px;font-size:10px}
+.range{accent-color:var(--red);width:150px}
+.performance{
+  display:flex;gap:8px;flex-wrap:wrap;margin-top:15px
+}
+.performance .chip{color:#bbb}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.visible{opacity:1;transform:none}
+.hidden{display:none!important}
+
+@media (max-width:900px){
+  .nav-arrows{display:none}.account-btn{display:none}
+  .window-grid,.game-detail-grid,.media-layout{grid-template-columns:1fr}
+  .settings-grid{grid-template-columns:1fr}
+  .photo-stage{min-height:300px}
+}
+@media (max-width:650px){
+  :root{--header:66px}
+  .header{padding:0 12px}.brand-name{font-size:18px}.logo{width:36px;height:36px}
+  .container,.hero-content{width:calc(100% - 28px)}
+  .hero h1{font-size:clamp(62px,18vw,100px)}
+  .hero-copy{font-size:12px}.section{padding:75px 0}
+  .game-card{min-height:430px}.card-content{inset:auto 25px 25px}.card-title{font-size:65px}
+  .card-arrow{right:20px;bottom:20px;width:52px;height:52px}
+  .footer-row,.copyright{flex-direction:column}.socials{justify-content:flex-start}
+  .window{padding:8px}.window-card{max-height:96vh;border-radius:18px}.window-body{padding:16px}
+  .game-hero-content{padding:27px}.game-hero{min-height:390px}
+  .media-note{width:100%;margin-left:0}.scroll-hint{display:none}
+}
+@media (min-width:2000px){
+  body{font-size:18px}.container,.hero-content{max-width:1800px}
+  .hero h1{font-size:180px}.section{padding:155px 0}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+</style>
 </head>
-<body>
 
-<!-- TOP BAR -->
-<header class="top">
-    <div class="logo" onclick="goHome()">RUPTURE</div>
-    <button class="search-btn" onclick="openSearch()">Search</button>
+<body>
+<div class="ambient"></div>
+
+<header class="header" id="header">
+  <div class="left">
+    <button class="menu" id="menuBtn" aria-label="Open navigation">
+      <span class="menu-lines"><i></i><i></i><i></i></span>
+    </button>
+    <div class="brand" onclick="goHome()">
+      <img class="logo" src="https://i.ibb.co/s9N99k1T/Picsart-25-07-18-11-08-46-406-2-1.jpg" alt="RUPTURE">
+      <span class="brand-name">RUPTURE</span>
+    </div>
+    <div class="nav-arrows">
+      <button class="icon-btn" onclick="history.back()" title="Back">←</button>
+      <button class="icon-btn" onclick="history.forward()" title="Forward">→</button>
+      <button class="icon-btn" onclick="location.reload()" title="Refresh">↻</button>
+    </div>
+  </div>
+  <div class="right">
+    <button class="search-btn" onclick="openWindow('searchWindow')" aria-label="Search">⌕</button>
+    <button class="account-btn" onclick="openWindow('accountWindow')">SIGN IN</button>
+  </div>
 </header>
 
-<!-- BACKGROUND -->
-<div class="bg"></div>
-
-<!-- HOME -->
-<section id="home" class="screen active">
-    <div class="feature-card" onclick="openProject()">
-        <div class="visual-placeholder">Set Your Cover Image Here</div>
-        <h1>PROJECT: RAVEN</h1>
-        <span>Animated Series</span>
+<main id="homePage">
+<section class="hero">
+  <div class="hero-lines"></div><div class="hero-orbit"></div>
+  <div class="hero-content">
+    <div class="hero-kicker"><span class="dot"></span> RUPTURE / GAME DEVELOPMENT STUDIO</div>
+    <h1>WE MAKE<span>GAMES.</span></h1>
+    <p class="hero-copy">RUPTURE is a game development studio. Explore the studio, our current game project and the media area.</p>
+    <div class="hero-actions">
+      <button class="btn primary" onclick="openGame()">OPEN DOWNFORCE <span>↗</span></button>
+      <button class="btn secondary" onclick="openWindow('aboutWindow')">ABOUT RUPTURE</button>
+      <button class="btn secondary" onclick="openWindow('mediaWindow')">MEDIA TEST</button>
     </div>
+    <div class="hero-meta"><span class="chip">DOWNFORCE</span><span class="chip">DRIFT</span><span class="chip">CARS</span><span class="chip">12+</span><span class="chip">COMING SOON</span></div>
+  </div>
+  <div class="scroll-hint">EXPLORE</div>
 </section>
 
-<!-- PROJECT -->
-<section id="project" class="screen">
-    <div class="project-layout">
-        <div class="project-info">
-            <h1>PROJECT: RAVEN</h1>
-            <p>Year: 2028</p>
-            <p>Status: In Development</p>
-            <p>Format: Animated Series</p>
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><div class="kicker">CURRENT PROJECT</div><h2 class="title">DOWNFORCE</h2></div>
+      <p class="desc">The only game currently listed by RUPTURE. No extra game information is added here.</p>
+    </div>
+    <article class="game-card reveal" id="downforceCard" onclick="openGame()">
+      <div class="card-noise"></div>
+      <div class="card-content">
+        <div class="card-category">DRIFT · CARS</div>
+        <div class="card-title">DOWNFORCE</div>
+        <div class="card-info"><span class="chip">COMING SOON</span><span class="chip">12+</span></div>
+      </div>
+      <div class="card-arrow">↗</div>
+    </article>
+  </div>
+</section>
 
-            <div class="project-actions">
-                <button disabled>Player in Development</button>
-            </div>
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div><div class="kicker">STUDIO</div><h2 class="title">RUPTURE</h2></div>
+      <p class="desc">A clean studio window with only information that is known about RUPTURE.</p>
+    </div>
+    <div class="window-grid">
+      <div class="panel reveal"><h3>Game development studio.</h3><p>RUPTURE is a game development studio.</p></div>
+      <div class="panel reveal"><h3>Current project</h3><div class="big-number">01</div><p>DownForce — Drift & Cars.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-row">
+      <div class="footer-logo">RUPTURE</div>
+      <div class="socials">
+        <a class="social" href="https://www.youtube.com/@RUPTURE_official" target="_blank" rel="noopener">YouTube</a>
+        <a class="social" href="https://tiktok.com/@rupture_official" target="_blank" rel="noopener">TikTok</a>
+        <a class="social" href="https://www.instagram.com/rupture_official_001?igsh=azZ1Mnd3bW85Zjl5" target="_blank" rel="noopener">Instagram</a>
+        <a class="social" href="https://x.com/Rupture_Off" target="_blank" rel="noopener">X</a>
+        <a class="social" href="https://www.patreon.com/c/RUPTURE_official" target="_blank" rel="noopener">Patreon</a>
+        <a class="social" href="https://boosty.to/rupture.official/donate" target="_blank" rel="noopener">Boosty</a>
+        <a class="social" href="https://t.me/rupture_off" target="_blank" rel="noopener">Telegram</a>
+      </div>
+    </div>
+    <div class="copyright"><span>© RUPTURE</span><span>DOWNFORCE · COMING SOON · 12+</span></div>
+  </div>
+</footer>
+
+<!-- NAVIGATION WINDOW -->
+<div class="drawer" id="navDrawer" onclick="closeOnBackdrop(event,'navDrawer')">
+  <aside class="drawer-panel">
+    <div class="window-head" style="margin:-30px -30px 25px"><span class="window-title">RUPTURE / NAVIGATION</span><button class="close" onclick="closeWindow('navDrawer')">×</button></div>
+    <div class="list">
+      <div class="result" onclick="goHome();closeWindow('navDrawer')"><strong>Lobby</strong><span>Return to the RUPTURE lobby</span></div>
+      <div class="result" onclick="openGame();closeWindow('navDrawer')"><strong>DownForce</strong><span>Open the dedicated game window</span></div>
+      <div class="result" onclick="openWindow('aboutWindow');closeWindow('navDrawer')"><strong>About RUPTURE</strong><span>Studio information</span></div>
+      <div class="result" onclick="openWindow('mediaWindow');closeWindow('navDrawer')"><strong>Media Lab</strong><span>YouTube and photo test players</span></div>
+      <div class="result" onclick="openWindow('marketWindow');closeWindow('navDrawer')"><strong>Market</strong><span>Current market state</span></div>
+      <div class="result" onclick="openWindow('newsWindow');closeWindow('navDrawer')"><strong>News</strong><span>Only confirmed project information</span></div>
+      <div class="result" onclick="openWindow('siteSettings');closeWindow('navDrawer')"><strong>Site Settings</strong><span>Website display and performance controls</span></div>
+    </div>
+  </aside>
+</div>
+
+<!-- SEARCH WINDOW -->
+<div class="window" id="searchWindow" onclick="closeOnBackdrop(event,'searchWindow')">
+  <div class="window-card">
+    <div class="window-head"><span class="window-title">SEARCH RUPTURE</span><button class="close" onclick="closeWindow('searchWindow')">×</button></div>
+    <div class="window-body">
+      <input id="searchInput" class="field" type="search" placeholder="Search DownForce, Drift, Cars..." autocomplete="off">
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ACCOUNT WINDOW -->
+<div class="window" id="accountWindow" onclick="closeOnBackdrop(event,'accountWindow')">
+  <div class="window-card">
+    <div class="window-head"><span class="window-title">RUPTURE / ACCOUNT</span><button class="close" onclick="closeWindow('accountWindow')">×</button></div>
+    <div class="window-body">
+      <div class="panel">
+        <h3>Sign in / local continuation</h3>
+        <p>This single-file version keeps account state locally in your browser. It is not a real server authentication system.</p>
+        <form class="auth-form" id="authForm" style="margin-top:20px">
+          <input class="field" id="authName" placeholder="Display name" required>
+          <input class="field" id="authEmail" type="email" placeholder="Email" required>
+          <button class="btn primary" type="submit">CONTINUE</button>
+          <div class="auth-message" id="authMessage"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT WINDOW -->
+<div class="window" id="aboutWindow" onclick="closeOnBackdrop(event,'aboutWindow')">
+  <div class="window-card">
+    <div class="window-head"><span class="window-title">ABOUT RUPTURE</span><button class="close" onclick="closeWindow('aboutWindow')">×</button></div>
+    <div class="window-body">
+      <div class="window-grid">
+        <div class="panel"><h3>RUPTURE</h3><p>RUPTURE is a game development studio.</p></div>
+        <div class="panel"><h3>Current game</h3><p>DownForce</p><div class="performance"><span class="chip">DRIFT</span><span class="chip">CARS</span><span class="chip">12+</span><span class="chip">COMING SOON</span></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEWS WINDOW -->
+<div class="window" id="newsWindow" onclick="closeOnBackdrop(event,'newsWindow')">
+  <div class="window-card">
+    <div class="window-head"><span class="window-title">RUPTURE / NEWS</span><button class="close" onclick="closeWindow('newsWindow')">×</button></div>
+    <div class="window-body">
+      <div class="panel"><div class="kicker">CURRENT</div><h3>DownForce — Coming Soon</h3><p>DownForce is currently listed as a RUPTURE game project.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- MARKET WINDOW -->
+<div class="window" id="marketWindow" onclick="closeOnBackdrop(event,'marketWindow')">
+  <div class="window-card">
+    <div class="window-head"><span class="window-title">DOWNFORCE / MARKET</span><button class="close" onclick="closeWindow('marketWindow')">×</button></div>
+    <div class="window-body">
+      <div class="panel" style="text-align:center;padding:60px 25px"><h3>Market</h3><p>No items are available yet.</p><div class="performance" style="justify-content:center"><span class="chip">COMING SOON</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MEDIA WINDOW -->
+<div class="window" id="mediaWindow" onclick="closeOnBackdrop(event,'mediaWindow')">
+  <div class="window-card">
+    <div class="window-head"><span class="window-title">RUPTURE / MEDIA LAB</span><button class="close" onclick="closeWindow('mediaWindow')">×</button></div>
+    <div class="window-body">
+      <div class="media-layout">
+        <section class="media-box">
+          <iframe id="ytPlayer" src="https://www.youtube.com/embed/aqz-KE-bpKQ?enablejsapi=1&rel=0&modestbranding=1&playsinline=1" title="YouTube test video" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+          <div class="media-controls">
+            <button class="media-control" onclick="ytCommand('playVideo')">▶ Play</button>
+            <button class="media-control" onclick="ytCommand('pauseVideo')">Ⅱ Pause</button>
+            <select class="select" id="qualitySelect" onchange="setYouTubeQuality(this.value)">
+              <option value="auto">Quality: Auto</option>
+              <option value="hd2160">2160p / 4K</option>
+              <option value="hd1440">1440p</option>
+              <option value="hd1080">1080p</option>
+              <option value="hd720">720p</option>
+              <option value="large">480p</option>
+            </select>
+            <button class="media-control" onclick="toggleYTFullscreen()">⛶ Fullscreen</button>
+            <span class="media-note">YouTube decides which qualities are actually available for the selected video/device.</span>
+          </div>
+        </section>
+
+        <section class="photo-box">
+          <div class="photo-stage" id="photoStage">
+            <img id="testPhoto" src="https://images.unsplash.com/photo-1500534623283-312aade485b7?auto=format&fit=crop&w=1600&q=90" alt="Test photo">
+          </div>
+          <div class="photo-caption"><span>TEST PHOTO</span><span id="photoState">FIT</span></div>
+          <div class="photo-buttons">
+            <button class="media-control" onclick="photoFit()">Fit</button>
+            <button class="media-control" onclick="photoZoom()">Zoom</button>
+            <button class="media-control" onclick="photoReset()">Reset</button>
+          </div>
+        </section>
+      </div>
+
+      <div class="performance">
+        <span class="chip">4K READY</span>
+        <span class="chip">120 FPS TARGET</span>
+        <span class="chip">RESPONSIVE</span>
+        <span class="chip">REDUCED-MOTION SUPPORT</span>
+      </div>
+      <p style="color:#666;font-size:11px;line-height:1.6;margin-top:13px">The site is built with GPU-friendly transforms, opacity transitions and responsive layouts. A webpage cannot force a monitor/browser to run at 120 Hz or force a YouTube stream to deliver 4K; the actual result depends on the device, display, browser and source video.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SITE SETTINGS WINDOW — NOT GAME SETTINGS -->
+<div class="window" id="siteSettings" onclick="closeOnBackdrop(event,'siteSettings')">
+  <div class="window-card">
+    <div class="window-head"><span class="window-title">RUPTURE / SITE SETTINGS</span><button class="close" onclick="closeWindow('siteSettings')">×</button></div>
+    <div class="window-body">
+      <div class="settings-grid">
+        <div class="setting"><div><span>Interface scale</span><small>Change the website UI size.</small></div><input class="range" id="uiScale" type="range" min=".9" max="1.12" step=".01" value="1"></div>
+        <div class="setting"><div><span>Effects</span><small>Reduce background effects for weaker devices.</small></div><select class="select" id="effectsMode"><option value="full">Full</option><option value="reduced">Reduced</option></select></div>
+        <div class="setting"><div><span>Visual target</span><small>Website target, not a hardware guarantee.</small></div><select class="select" id="visualTarget"><option>Auto</option><option>4K / 2160p</option><option>1440p</option><option>1080p</option><option>720p</option></select></div>
+        <div class="setting"><div><span>Motion</span><small>Respect the browser's reduced-motion preference.</small></div><select class="select" id="motionMode"><option>Auto</option><option>Full</option><option>Reduced</option></select></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DOWNFORCE WINDOW -->
+<div class="window game-window" id="gameWindow" onclick="closeOnBackdrop(event,'gameWindow')">
+  <div class="window-card">
+    <div class="window-head">
+      <span class="window-title">RUPTURE / DOWNFORCE</span>
+      <div style="display:flex;gap:7px"><button class="close" onclick="openWindow('mediaWindow')">MEDIA</button><button class="close" onclick="closeWindow('gameWindow')">×</button></div>
+    </div>
+    <div class="window-body">
+      <div class="game-hero">
+        <div class="game-hero-content">
+          <div class="kicker">RUPTURE · CURRENT GAME</div>
+          <h1>DOWN<br>FORCE</h1>
+          <div class="game-actions">
+            <button class="btn primary" onclick="openWindow('mediaWindow')">OPEN MEDIA</button>
+            <button class="btn secondary" onclick="openWindow('marketWindow')">OPEN MARKET</button>
+          </div>
+          <div class="hero-meta"><span class="chip">DRIFT</span><span class="chip">CARS</span><span class="chip">12+</span><span class="chip">COMING SOON</span></div>
         </div>
-
-        <div class="project-visual">
-            <div class="visual-placeholder">Set Your Poster Here</div>
+      </div>
+      <div class="game-detail-grid">
+        <div class="panel"><div class="kicker">ABOUT</div><h3>DownForce</h3><p>DownForce is a game about drifting and cars.</p></div>
+        <div class="panel stat-card">
+          <div class="stat"><span>Category</span><b>Drift</b></div>
+          <div class="stat"><span>Age rating</span><b>12+</b></div>
+          <div class="stat"><span>Status</span><b>Coming Soon</b></div>
         </div>
+      </div>
     </div>
-</section>
+  </div>
+</div>
 
-<!-- SEARCH -->
-<section id="searchScreen" class="screen">
-    <div class="search-screen">
-        <input id="searchInput" placeholder="Type to search">
-        <div id="results"></div>
-    </div>
-</section>
+<script>
+const $ = s => document.querySelector(s);
+const menuBtn = $('#menuBtn');
+const navDrawer = $('#navDrawer');
+const header = $('#header');
 
-<script src="script.js"></script>
+function openWindow(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.classList.add('open');
+  document.body.style.overflow='hidden';
+  if(id==='searchWindow') setTimeout(()=>$('#searchInput')?.focus(),120);
+}
+function closeWindow(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.remove('open');
+  if(!document.querySelector('.window.open,.drawer.open')) document.body.style.overflow='';
+}
+function closeOnBackdrop(e,id){ if(e.target.id===id) closeWindow(id) }
+
+menuBtn.addEventListener('click',()=>{
+  menuBtn.classList.toggle('active');
+  if(menuBtn.classList.contains('active')) openWindow('navDrawer');
+  else closeWindow('navDrawer');
+});
+
+function goHome(){
+  document.querySelectorAll('.window.open,.drawer.open').forEach(x=>x.classList.remove('open'));
+  document.body.style.overflow='';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function openGame(){openWindow('gameWindow')}
+
+window.addEventListener('scroll',()=>{
+  header.classList.toggle('scrolled',window.scrollY>25);
+},{passive:true});
+
+/* Search actually filters the known studio/game data. */
+const searchable=[
+  {title:'DownForce',meta:'Drift · Cars · 12+ · Coming Soon',action:openGame},
+  {title:'RUPTURE',meta:'Game development studio',action:()=>openWindow('aboutWindow')},
+  {title:'Media Lab',meta:'YouTube player · Photo player',action:()=>openWindow('mediaWindow')},
+  {title:'Market',meta:'DownForce market',action:()=>openWindow('marketWindow')}
+];
+function renderSearch(q=''){
+  const root=$('#searchResults');
+  const query=q.toLowerCase().trim();
+  const list=searchable.filter(x=>!query || (x.title+' '+x.meta).toLowerCase().includes(query));
+  root.innerHTML=list.length?list.map((x,i)=>`<div class="result" data-result="${i}"><strong>${x.title}</strong><span>${x.meta}</span></div>`).join(''):'<div class="panel"><p>No matching result.</p></div>';
+  root.querySelectorAll('[data-result]').forEach(el=>el.addEventListener('click',()=>{
+    list[Number(el.dataset.result)].action();
+    closeWindow('searchWindow');
+  }));
+}
+renderSearch();
+$('#searchInput').addEventListener('input',e=>renderSearch(e.target.value));
+
+/* YouTube IFrame API commands. */
+let ytReady=false;
+window.onYouTubeIframeAPIReady=()=>{ytReady=true};
+const ytScript=document.createElement('script');
+ytScript.src='https://www.youtube.com/iframe_api';
+document.head.appendChild(ytScript);
+
+function postYT(func,args=[]){
+  const frame=$('#ytPlayer');
+  if(!frame?.contentWindow) return;
+  frame.contentWindow.postMessage(JSON.stringify({event:'command',func,args}), 'https://www.youtube.com');
+}
+function ytCommand(command){postYT(command)}
+function setYouTubeQuality(q){postYT('setPlaybackQuality',[q])}
+function toggleYTFullscreen(){
+  const frame=$('#ytPlayer');
+  if(frame?.requestFullscreen) frame.requestFullscreen();
+  else alert('Fullscreen is not available in this browser.');
+}
+
+/* Photo player */
+function photoZoom(){$('#photoStage').classList.add('zoom');$('#photoState').textContent='ZOOM'}
+function photoFit(){$('#photoStage').classList.remove('zoom');$('#photoState').textContent='FIT'}
+function photoReset(){$('#testPhoto').style.transform='';photoFit()}
+
+/* Site-only settings */
+$('#uiScale').addEventListener('input',e=>document.documentElement.style.setProperty('--ui-scale',e.target.value));
+$('#effectsMode').addEventListener('change',e=>{
+  document.body.classList.toggle('low-effects',e.target.value==='reduced');
+});
+$('#visualTarget').addEventListener('change',e=>document.documentElement.dataset.target=e.target.value);
+$('#motionMode').addEventListener('change',e=>{
+  document.documentElement.dataset.motion=e.target.value;
+});
+
+/* Local demo account */
+$('#authForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=$('#authName').value.trim();
+  const email=$('#authEmail').value.trim();
+  localStorage.setItem('ruptureLocalAccount',JSON.stringify({name,email}));
+  $('#authMessage').textContent=`Local account saved for ${name}.`;
+});
+try{
+  const account=JSON.parse(localStorage.getItem('ruptureLocalAccount')||'null');
+  if(account){$('#authName').value=account.name||'';$('#authEmail').value=account.email||''}
+}catch(e){}
+
+/* Reveal animation */
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* Tiny cursor parallax on capable pointer devices. */
+if(matchMedia('(pointer:fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches){
+  document.querySelectorAll('.game-card').forEach(card=>{
+    card.addEventListener('pointermove',e=>{
+      const r=card.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+      card.style.transform=`perspective(1100px) rotateX(${y*-2}deg) rotateY(${x*2}deg) translateY(-8px)`;
+    });
+    card.addEventListener('pointerleave',()=>card.style.transform='');
+  });
+}
+
+/* Escape closes the active window. */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    const open=[...document.querySelectorAll('.window.open,.drawer.open')].pop();
+    if(open) closeWindow(open.id);
+  }
+});
+</script>
 </body>
 </html>
